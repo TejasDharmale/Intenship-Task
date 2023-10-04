@@ -1,0 +1,48 @@
+import pandas as pd
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Load the Iris dataset as an example
+iris = load_iris()
+data = pd.DataFrame(data= np.c_[iris['data'], iris['target']], columns= iris['feature_names'] + ['target'])
+
+# Display the first few rows of the dataset
+print("Original Dataset:")
+print(data.head())
+
+# Separate features (X) and target (y)
+X = data.drop('target', axis=1)
+y = data['target']
+
+# Split the data into training and testing sets (e.g., 80% training, 20% testing)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Data Preprocessing:
+# 1. Standardize the features (mean=0, std=1)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Feature Engineering (for demonstration purposes, we'll create a new feature)
+# 2. Create a new feature, 'sepal_length + petal_length'
+X_train['sepal_petal_length'] = X_train['sepal length (cm)'] + X_train['petal length (cm)']
+X_test['sepal_petal_length'] = X_test['sepal length (cm)'] + X_test['petal length (cm)']
+
+# Display the preprocessed and engineered dataset
+print("\nPreprocessed and Engineered Dataset:")
+print(X_train.head())
+
+# Now, you can use X_train and y_train to train your machine learning model,
+# and X_test and y_test for testing.
+
+# Example: Train a simple model (e.g., Logistic Regression)
+from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Evaluate the model
+accuracy = model.score(X_test, y_test)
+print(f"\nModel Accuracy: {accuracy:.2f}")
